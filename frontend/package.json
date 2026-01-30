@@ -1,0 +1,36 @@
+{
+  "name": "nuxt3-minimal-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev --port 3000",
+    "build": "nuxt build",
+    "start": "node .output/server/index.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "@pinia/nuxt": "^0.11.2",
+    "@vueuse/core": "^13.9.0",
+    "axios": "^1.12.2",
+    "nuxt": "^3.19.2",
+    "pinia": "^3.0.3",
+    "pinia-plugin-persistedstate": "^4.5.0",
+    "vee-validate": "^4.13.2",
+    "vite-plugin-vuetify": "^2.0.7",
+    "vuetify": "^3.7.3",
+    "yup": "^1.4.0"
+  },
+  "devDependencies": {
+    "@vue/test-utils": "^2.4.6",
+    "autoprefixer": "^10.4.20",
+    "daisyui": "^5.1.29",
+    "jsdom": "^24.1.0",
+    "postcss": "^8.4.40",
+    "sass": "^1.77.0",
+    "tailwindcss": "^3.4.9",
+    "vitest": "^3.2.4"
+  }
+}

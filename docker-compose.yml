@@ -1,0 +1,69 @@
+services:
+  db:
+      image: mysql:8.0
+      command: >
+        --character-set-server=utf8mb4
+        --collation-server=utf8mb4_unicode_ci
+      ports:
+      - "3306:3306"    # เปิดพอร์ต MySQL ออกมาหา host
+      environment:
+        MYSQL_ROOT_PASSWORD: rootpassword
+        MYSQL_DATABASE: skills_db
+        MYSQL_USER: user1
+        MYSQL_PASSWORD: user1_1234
+        TZ: Asia/Bangkok
+      volumes:
+        - db_data:/var/lib/mysql
+        - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+        
+      healthcheck:
+        test: ["CMD","mysqladmin","ping","-proot_password"]
+        interval: 10s
+        timeout: 5s
+        retries: 10
+      networks: [fsnet]
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: rootpassword
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks: [fsnet]
+
+  api:
+    build: ./backend
+    env_file:
+      - ./backend/.env
+    ports:
+      - "7000:7000"
+    depends_on:
+      db:
+        condition: service_started
+    networks: [fsnet]
+    volumes:
+      - ./backend/uploads:/app/uploads
+
+  frontend:
+    build: ./frontend
+    environment:
+    
+      NITRO_PORT: 3000
+  
+    ports:
+      - "3000:3000"
+     
+    depends_on:
+      - api
+    networks: [fsnet]
+
+volumes:
+  db_data:
+
+networks:
+  fsnet:
+    driver: bridge

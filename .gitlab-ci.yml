@@ -1,0 +1,8 @@
+stages: [check]
+docker_access:
+  stage: check
+  tags: ["docker"]     # ให้ตรงกับ tag ของ runner
+  image: docker:27.1.2-cli
+  script:
+    - docker version
+    - docker info | head -n 30

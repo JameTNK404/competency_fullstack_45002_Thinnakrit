@@ -1,0 +1,4 @@
+<script setup>
+definePageMeta({ layout: 'dashboard' })
+</script>
+<template><div class="p-4">Coming soon: แสดงความคิดเห็น</div></template>
