@@ -83,7 +83,7 @@
 </template>
 
 <script setup>
-definePageMeta({ middleware: 'auth' });
+definePageMeta({ middleware: undefined });
 
 const { $api } = useNuxtApp();
 
