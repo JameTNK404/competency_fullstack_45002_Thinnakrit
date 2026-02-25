@@ -1,0 +1,13 @@
+{
+  "http_status": 200,
+  "response": {
+    "success": true,
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImV2YWx1YXRvciIsIm5hbWUiOiLguIHguKPguKPguKHguIHguLLguKPguJvguKPguLDguYDguKHguLTguJnguYTguK3guJfguLUiLCJpYXQiOjE3NzIwMjEwODUsImV4cCI6MTc3MjAyNDY4NX0.9wldXH3Nwvu_vDSOro4Iib3G10EzsN1D0UAPM2y-cPw",
+    "user": {
+      "id": 3,
+      "name": "กรรมการประเมินไอที",
+      "email": "eva.it@ccollege.ac.th",
+      "role": "evaluator"
+    }
+  }
+}

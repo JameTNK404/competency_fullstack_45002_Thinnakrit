@@ -59,29 +59,47 @@ const uploadRoutes = require("./routes/upload.routes");
 app.use("/api/auth", authRoutes);
 // http://localhost:7000/api/users
 app.use("/api/users", userRoutes);
+app.use("/users", userRoutes);
+
 // http://localhost:7000/api/upload
 app.use("/api/upload", uploadRoutes);
+app.use("/upload", uploadRoutes);
+
 // http://localhost:7000/api/periods
 app.use("/api/periods", require("./routes/periods.routes"));
+app.use("/periods", require("./routes/periods.routes"));
+
 // http://localhost:7000/api/topics
 app.use("/api/topics", require("./routes/topics.routes"));
+app.use("/topics", require("./routes/topics.routes"));
+
 // http://localhost:7000/api/indicators
 app.use("/api/indicators", require("./routes/indicators.routes"));
+app.use("/indicators", require("./routes/indicators.routes"));
+
 // http://localhost:7001/api/assignments
 app.use("/api/assignments", require("./routes/assignments.routes"));
+app.use("/assignments", require("./routes/assignments.routes"));
+
 // http://localhost:7001/api/me
 app.use("/api/me", require("./routes/me.routes"));
+app.use("/me", require("./routes/me.routes"));
+
 // http://localhost:7001/api/evaluator
 app.use("/api/evaluator", require("./routes/evaluator.routes"));
+app.use("/evaluator", require("./routes/evaluator.routes"));
+
 // http://localhost:7001/api/reports
 app.use("/api/reports", require("./routes/reports.routes"));
+app.use("/reports", require("./routes/reports.routes"));
+
 // http://localhost:7001/api/results
 app.use("/api/results", require("./routes/results.routes"));
-// จะได้ /api/periods/active, /api/indicators, ...
-// จะได้ /api/periods/active, /api/indicators, ...
+app.use("/results", require("./routes/results.routes"));
 
 // << เส้นทางสำหรับ Period/Indicator/EvidenceType และ POST /attachments
-app.use("/api", attachmentsApi);           // จะได้ /api/periods/active, /api/indicators, ...
+app.use("/api", attachmentsApi);
+app.use("/", attachmentsApi);
 
 // ─── Exam Task Endpoints: /task1 – /task5 ─────────────────────────────────
 // ใช้ทดสอบโดยผู้ตรวจข้อสอบตาม readme-plan.md ส่วน 2.8

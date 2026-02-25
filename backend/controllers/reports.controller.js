@@ -90,7 +90,7 @@ exports.getProgress = async (req, res, next) => {
         const assignments = await db('assignments')
             .join('users as evaluatee', 'assignments.evaluatee_id', 'evaluatee.id')
             .where({ period_id })
-            .select('assignments.department', 'assignments.evaluatee_id');
+            .select('assignments.dept_id as department', 'assignments.evaluatee_id');
 
         // Note: Progress can be defined as "Has at least 1 evaluation result" or "All indicators scored"
         // Let's define "evaluated" as having at least 1 row in evaluation_results for this period.
@@ -135,7 +135,7 @@ exports.getAdminResults = async (req, res, next) => {
             .join('users as evaluatee', 'assignments.evaluatee_id', 'evaluatee.id')
             .join('users as evaluator', 'assignments.evaluator_id', 'evaluator.id')
             .where('assignments.period_id', period_id)
-            .select('assignments.evaluatee_id', 'evaluatee.name_th as evaluatee_name', 'assignments.department', 'evaluator.name_th as evaluator_name');
+            .select('assignments.evaluatee_id', 'evaluatee.name_th as evaluatee_name', 'assignments.dept_id as department', 'evaluator.name_th as evaluator_name');
 
         const indicators = await db('indicators').where({ active: 1 });
         const topics = await db('evaluation_topics').where({ active: 1 });

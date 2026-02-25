@@ -1,0 +1,7 @@
+{
+  "http_status": 415,
+  "response": {
+    "success": false,
+    "message": "Unsupported file type"
+  }
+}

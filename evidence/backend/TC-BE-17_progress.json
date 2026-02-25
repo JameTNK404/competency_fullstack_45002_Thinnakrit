@@ -1,0 +1,32 @@
+{
+  "http_status": 200,
+  "response": {
+    "success": true,
+    "data": [
+      {
+        "department": "1",
+        "submitted": 1,
+        "total": 1,
+        "percent": 100
+      },
+      {
+        "department": "2",
+        "submitted": 0,
+        "total": 1,
+        "percent": 0
+      },
+      {
+        "department": "4",
+        "submitted": 0,
+        "total": 1,
+        "percent": 0
+      },
+      {
+        "department": "Unknown",
+        "submitted": 0,
+        "total": 1,
+        "percent": 0
+      }
+    ]
+  }
+}

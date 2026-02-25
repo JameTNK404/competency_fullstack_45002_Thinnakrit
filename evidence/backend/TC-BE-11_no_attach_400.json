@@ -1,0 +1,6 @@
+{
+  "http_status": 400,
+  "response": {
+    "error": "EVIDENCE_REQUIRED"
+  }
+}

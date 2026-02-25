@@ -1,0 +1,12 @@
+{
+  "http_status": 200,
+  "response": {
+    "success": true,
+    "items": [],
+    "meta": {
+      "total": 0,
+      "page": 1,
+      "pageSize": 10
+    }
+  }
+}

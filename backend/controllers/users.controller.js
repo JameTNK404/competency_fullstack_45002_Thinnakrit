@@ -57,9 +57,10 @@ exports.list = async (req, res, next) => {
 
     const [{ total }] = await countQuery;
 
-    query.orderBy(sortField || 'id', sortDir || 'desc')
-      .limit(pageSize)
-      .offset((page - 1) * pageSize);
+    query.orderBy(sortField || 'id', sortDir || 'desc');
+    if (pageSize > 0) {
+      query.limit(pageSize).offset((page - 1) * pageSize);
+    }
 
     const items = await query;
 
@@ -262,12 +263,16 @@ exports.listServer = async (req, res, next) => {
       .count({ cnt: "*" });
 
     // 5) ดึงแถวเฉพาะหน้าที่ต้องการ (LIMIT/OFFSET + ORDER)
-    const items = await db("users")
+    let query = db("users")
       .select("id", "name_th", "email", "role", "created_at")
       .whereRaw("CONCAT(id,' ',name_th,' ',email,' ',role) LIKE ?", [like])
-      .orderBy(column, dir)
-      .limit(itemsPerPage)
-      .offset(off);
+      .orderBy(column, dir);
+
+    if (itemsPerPage > 0) {
+      query = query.limit(itemsPerPage).offset(off);
+    }
+
+    const items = await query;
 
     // 6) ส่งกลับพร้อม total เพื่อให้หน้าเว็บคำนวณจำนวนหน้าได้
     res.json({

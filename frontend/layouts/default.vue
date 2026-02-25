@@ -1,9 +1,11 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { useMenu } from '~/composables/useMenu'  // มีอยู่แล้วในโปรเจกต์ครู
-// TODO: โหลด role จาก store/cookie หลัง login จริง
-const role = ref('user') // 'admin' | 'evaluator' | 'user'
-const { menu } = useMenu(role)                   // จะคืนเมนูตามบทบาทให้อัตโนมัติ :contentReference[oaicite:5]{index=5}
+import { useAuthStore } from '~/stores/auth'
+import { useMenu } from '~/composables/useMenu'
+
+const auth = useAuthStore()
+const role = computed(() => auth?.user?.role ?? 'user')
+const { menu } = useMenu(role)
 const drawer = ref(true)
 </script>
 

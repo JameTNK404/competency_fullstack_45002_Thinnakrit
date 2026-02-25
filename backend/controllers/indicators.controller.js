@@ -33,7 +33,10 @@ exports.list = async (req, res, next) => {
         }).count("* as count").first();
         const total = totalRes.count;
 
-        const items = await query.limit(pageSize).offset((page - 1) * pageSize);
+        if (pageSize > 0) {
+            query.limit(pageSize).offset((page - 1) * pageSize);
+        }
+        const items = await query;
 
         res.json({
             success: true,

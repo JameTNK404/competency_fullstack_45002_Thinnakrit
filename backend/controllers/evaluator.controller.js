@@ -23,10 +23,10 @@ exports.getAssignments = async (req, res, next) => {
             .select(
                 "assignments.evaluatee_id",
                 "evaluatee.name_th as evaluatee_name",
-                "assignments.department",
+                "assignments.dept_id as department",
                 db.raw("COUNT(evaluation_results.id) as scored_count")
             )
-            .groupBy("assignments.evaluatee_id", "evaluatee.name_th", "assignments.department");
+            .groupBy("assignments.evaluatee_id", "evaluatee.name_th", "assignments.dept_id");
 
         res.json({ success: true, period: activePeriod, assignments });
     } catch (e) {

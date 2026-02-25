@@ -1,0 +1,23 @@
+{
+  "http_status": 200,
+  "response": {
+    "success": true,
+    "data": [
+      {
+        "id": 1,
+        "period_id": 1,
+        "evaluatee_id": 4,
+        "evaluator_id": 3,
+        "topic_id": 1,
+        "indicator_id": 2,
+        "score": "3.00",
+        "value_yes_no": null,
+        "notes": "สื่อการสอนครบถ้วน เหมาะกับผู้เรียน",
+        "status": "submitted",
+        "created_at": "2026-02-25T03:36:22.000Z",
+        "updated_at": "2026-02-25T08:38:27.000Z",
+        "submitted_at": "2026-02-25T08:38:27.000Z"
+      }
+    ]
+  }
+}

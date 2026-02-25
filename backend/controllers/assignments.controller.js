@@ -10,6 +10,7 @@ exports.list = async (req, res, next) => {
             .leftJoin("users as evaluatee", "assignments.evaluatee_id", "evaluatee.id")
             .select(
                 "assignments.*",
+                "assignments.dept_id as department",
                 "periods.name_th as period_name",
                 "evaluator.name_th as evaluator_name",
                 "evaluatee.name_th as evaluatee_name"
@@ -19,7 +20,7 @@ exports.list = async (req, res, next) => {
             query.where(builder => {
                 builder.where("evaluator.name_th", "like", `%${q}%`)
                     .orWhere("evaluatee.name_th", "like", `%${q}%`)
-                    .orWhere("assignments.department", "like", `%${q}%`);
+                    .orWhere("assignments.dept_id", "like", `%${q}%`);
             });
         }
 
@@ -47,7 +48,7 @@ exports.list = async (req, res, next) => {
                 if (q) {
                     builder.where("evaluator.name_th", "like", `%${q}%`)
                         .orWhere("evaluatee.name_th", "like", `%${q}%`)
-                        .orWhere("assignments.department", "like", `%${q}%`);
+                        .orWhere("assignments.dept_id", "like", `%${q}%`);
                 }
                 if (period_id) builder.where("assignments.period_id", period_id);
                 if (evaluator_id) builder.where("assignments.evaluator_id", evaluator_id);
@@ -55,7 +56,10 @@ exports.list = async (req, res, next) => {
             }).count("* as count").first();
         const total = totalRes.count;
 
-        const items = await query.limit(pageSize).offset((page - 1) * pageSize);
+        if (pageSize > 0) {
+            query.limit(pageSize).offset((page - 1) * pageSize);
+        }
+        const items = await query;
 
         res.json({
             success: true,
@@ -69,7 +73,9 @@ exports.list = async (req, res, next) => {
 
 exports.get = async (req, res, next) => {
     try {
-        const row = await db("assignments").where({ id: req.params.id }).first();
+        const row = await db("assignments")
+            .select("assignments.*", "assignments.dept_id as department")
+            .where({ id: req.params.id }).first();
         if (!row) return res.status(404).json({ success: false, message: "Assignment not found" });
         res.json({ success: true, data: row });
     } catch (e) {
@@ -85,13 +91,13 @@ exports.create = async (req, res, next) => {
         }
 
         // Check duplicate assignment
-        const existing = await db("assignments").where({ period_id, evaluatee_id, department }).first();
+        const existing = await db("assignments").where({ period_id, evaluatee_id, dept_id: department }).first();
         if (existing) {
             return res.status(409).json({ success: false, message: "DUPLICATE_ASSIGNMENT: This evaluatee is already assigned for the given period and department." });
         }
 
         const [insertId] = await db("assignments").insert({
-            period_id, evaluator_id, evaluatee_id, department
+            period_id, evaluator_id, evaluatee_id, dept_id: department
         });
         const created = await db("assignments").where({ id: insertId }).first();
 
@@ -109,15 +115,15 @@ exports.update = async (req, res, next) => {
         if (period_id !== undefined) payload.period_id = period_id;
         if (evaluator_id !== undefined) payload.evaluator_id = evaluator_id;
         if (evaluatee_id !== undefined) payload.evaluatee_id = evaluatee_id;
-        if (department !== undefined) payload.department = department;
+        if (department !== undefined) payload.dept_id = department;
 
         // Check duplicate assignment if updating keys
-        if (payload.period_id || payload.evaluatee_id || payload.department) {
+        if (payload.period_id || payload.evaluatee_id || payload.dept_id) {
             let pId = payload.period_id || (await db("assignments").where({ id }).first()).period_id;
             let eId = payload.evaluatee_id || (await db("assignments").where({ id }).first()).evaluatee_id;
-            let d = payload.department || (await db("assignments").where({ id }).first()).department;
+            let d = payload.dept_id || (await db("assignments").where({ id }).first()).dept_id;
 
-            const existing = await db("assignments").where({ period_id: pId, evaluatee_id: eId, department: d }).whereNot('id', id).first();
+            const existing = await db("assignments").where({ period_id: pId, evaluatee_id: eId, dept_id: d }).whereNot('id', id).first();
             if (existing) {
                 return res.status(409).json({ success: false, message: "DUPLICATE_ASSIGNMENT: This evaluatee is already assigned for the given period and department." });
             }

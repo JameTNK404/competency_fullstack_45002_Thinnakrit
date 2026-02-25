@@ -1,0 +1,48 @@
+{
+  "http_status": 200,
+  "response": {
+    "success": true,
+    "period_id": 1,
+    "evaluatee_id": null,
+    "scoreData": {
+      "totalObtained": 2.333333333333333,
+      "totalMax": 3,
+      "percentage": 77.7778,
+      "scoreOutOf60": 46.6667,
+      "byTopic": [
+        {
+          "topic_id": 1,
+          "code": "TOP1",
+          "weight": "0.30",
+          "obtained": 2.3333,
+          "max": 3,
+          "percentage": 77.78
+        },
+        {
+          "topic_id": 2,
+          "code": "TOP2",
+          "weight": "0.20",
+          "obtained": 0,
+          "max": 0,
+          "percentage": 0
+        },
+        {
+          "topic_id": 3,
+          "code": "TOP3",
+          "weight": "0.30",
+          "obtained": 0,
+          "max": 0,
+          "percentage": 0
+        },
+        {
+          "topic_id": 4,
+          "code": "TOP4",
+          "weight": "0.20",
+          "obtained": 0,
+          "max": 0,
+          "percentage": 0
+        }
+      ]
+    }
+  }
+}
