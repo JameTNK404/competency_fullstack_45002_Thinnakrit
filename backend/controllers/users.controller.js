@@ -28,30 +28,52 @@ const pickPublic = (row) =>
  */
 exports.list = async (req, res, next) => {
   try {
-    // กรณี admin เห็นทั้งหมด
-    if (req.user?.role === "admin") {
-      const items = await db("users")
-        .select("id", "name_th", "email", "role", "created_at")
-        .orderBy("id", "desc");
-      return res.json({ success: true, items, total: items.length });
+    const q = req.query.q || '';
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+    const sort = req.query.sort || 'id:desc';
+    const [sortField, sortDir] = sort.split(':');
+
+    let query = db("users").select("id", "name_th", "email", "role", "created_at");
+    let countQuery = db('users').count('* as total');
+
+    if (q) {
+      const like = `%${q}%`;
+      query.where(function () {
+        this.where("name_th", "like", like)
+          .orWhere("email", "like", like);
+      });
+      countQuery.where(function () {
+        this.where("name_th", "like", like)
+          .orWhere("email", "like", like);
+      });
     }
 
-    // ไม่ใช่ admin -> ต้องล็อกอิน และเห็นเฉพาะตัวเอง
-    if (!req.user?.id) {
-      return res.status(403).json({ success: false, message: "Forbidden" });
+    if (req.user?.role !== "admin") {
+      if (!req.user?.id) return res.status(401).json({ success: false, message: "Missing token" });
+      query.where({ id: req.user.id });
+      countQuery.where({ id: req.user.id });
     }
-    const me = await db("users")
-      .select("id", "name_th", "email", "role", "created_at")
-      .where({ id: req.user.id })
-      .first();
+
+    const [{ total }] = await countQuery;
+
+    query.orderBy(sortField || 'id', sortDir || 'desc')
+      .limit(pageSize)
+      .offset((page - 1) * pageSize);
+
+    const items = await query;
 
     return res.json({
       success: true,
-      items: me ? [me] : [],
-      total: me ? 1 : 0,
+      items,
+      meta: {
+        total: Number(total || 0),
+        page,
+        pageSize
+      }
     });
   } catch (e) {
-    next(e); // ส่งต่อให้ error middleware รวมศูนย์การจัดการ error
+    next(e);
   }
 };
 

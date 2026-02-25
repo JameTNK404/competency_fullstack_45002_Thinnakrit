@@ -41,13 +41,13 @@ exports.get = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
     try {
-        const { code, name_th, description, weight = 0, is_active = 1 } = req.body || {};
-        if (!code || !name_th) {
+        const { code, title_th, description, weight = 0, is_active = 1 } = req.body || {};
+        if (!code || !title_th) {
             return res.status(400).json({ success: false, message: "Missing required fields" });
         }
 
         const [insertId] = await db("evaluation_topics").insert({
-            code, title_th: name_th, description, weight, active: is_active
+            code, title_th, description, weight, active: is_active
         });
         const created = await db("evaluation_topics").where({ id: insertId }).first();
 
@@ -60,10 +60,10 @@ exports.create = async (req, res, next) => {
 exports.update = async (req, res, next) => {
     try {
         const id = req.params.id;
-        const { code, name_th, description, weight, is_active } = req.body || {};
+        const { code, title_th, description, weight, is_active } = req.body || {};
         const payload = {};
         if (code !== undefined) payload.code = code;
-        if (name_th !== undefined) payload.title_th = name_th;
+        if (title_th !== undefined) payload.title_th = title_th;
         if (description !== undefined) payload.description = description;
         if (weight !== undefined) payload.weight = weight;
         if (is_active !== undefined) payload.active = is_active;

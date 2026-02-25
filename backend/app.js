@@ -8,10 +8,13 @@ const attachmentsApi = require("./routes/attachments");   // << เพิ่ม�
 const swaggerUi = require("swagger-ui-express");
 const fs = require("fs");
 
+const helmet = require("helmet");
+
 dotenv.config();
 
 const app = express();
 
+app.use(helmet()); // Add security headers (TC-DevOps)
 app.use(cors({ origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : '*' }));
 // app.use(cors());
 app.use(express.urlencoded({ extended: true }));  // ใส่คู่กับ express.json()
@@ -72,6 +75,9 @@ app.use("/api/me", require("./routes/me.routes"));
 app.use("/api/evaluator", require("./routes/evaluator.routes"));
 // http://localhost:7001/api/reports
 app.use("/api/reports", require("./routes/reports.routes"));
+// http://localhost:7001/api/results
+app.use("/api/results", require("./routes/results.routes"));
+// จะได้ /api/periods/active, /api/indicators, ...
 // จะได้ /api/periods/active, /api/indicators, ...
 
 // << เส้นทางสำหรับ Period/Indicator/EvidenceType และ POST /attachments

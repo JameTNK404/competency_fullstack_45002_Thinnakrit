@@ -183,7 +183,7 @@ async function save() {
                 <v-autocomplete
                    v-model="editedItem.topic_id"
                    :items="topics"
-                   item-title="name_th"
+                   item-title="title_th"
                    item-value="id"
                    label="อ้างอิงหัวข้อประเมิน"
                    required

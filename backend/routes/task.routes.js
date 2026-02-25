@@ -193,7 +193,7 @@ router.post(
                 return res.status(409).json({ error: 'DUPLICATE_ASSIGNMENT' });
             }
 
-            const [insertId] = await db('assignments').insert({ evaluator_id, evaluatee_id, period_id, department: dept || null });
+            const [insertId] = await db('assignments').insert({ evaluator_id, evaluatee_id, period_id, dept_id: dept || null });
             const created = await db('assignments').where({ id: insertId }).first();
 
             return res.status(201).json({ success: true, data: created });
@@ -212,7 +212,7 @@ router.get(
             const { period_id } = req.query;
             if (!period_id) return res.status(400).json({ error: 'period_id is required' });
 
-            const assignments = await db('assignments').where({ period_id }).select('evaluatee_id', 'department');
+            const assignments = await db('assignments').where({ period_id }).select('evaluatee_id', 'dept_id');
 
             // submitted = มีอย่างน้อย 1 row ที่ status='submitted' สำหรับ evaluatee นี้ใน period นี้
             const submittedRows = await db('evaluation_results')
@@ -223,7 +223,7 @@ router.get(
 
             const deptStats = {};
             assignments.forEach(a => {
-                const dept = a.department || 'Unknown';
+                const dept = a.dept_id || 'Unknown';
                 if (!deptStats[dept]) deptStats[dept] = { submitted: 0, total: 0 };
                 deptStats[dept].total += 1;
                 if (submittedIds.has(a.evaluatee_id)) deptStats[dept].submitted += 1;

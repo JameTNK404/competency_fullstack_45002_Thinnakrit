@@ -17,7 +17,7 @@ const dialog = ref(false)
 const confirmDialog = ref(false)
 const formIsValid = ref(false)
 
-const defaultItem = { code: '', name_th: '', description: '', weight: 0, is_active: 1 }
+const defaultItem = { code: '', title_th: '', description: '', weight: 0, is_active: 1 }
 const editedIndex = ref(-1)
 const editedItem = ref({ ...defaultItem })
 
@@ -131,7 +131,7 @@ async function save() {
           :loading="loading"
           :headers="[
             { title:'รหัส', key:'code' },
-            { title:'ชื่อหัวข้อ', key:'name_th' },
+            { title:'ชื่อหัวข้อ', key:'title_th' },
             { title:'น้ำหนัก', key:'weight' },
             { title:'สถานะ', key:'is_active' },
             { title:'จัดการ', key:'actions', sortable:false }
@@ -163,7 +163,7 @@ async function save() {
                 <v-text-field v-model="editedItem.code" label="รหัส (Code)" required :rules="[v => !!v || 'Required']" />
               </v-col>
               <v-col cols="12" sm="8">
-                <v-text-field v-model="editedItem.name_th" label="ชื่อหัวข้อ" required :rules="[v => !!v || 'Required']" />
+                <v-text-field v-model="editedItem.title_th" label="ชื่อหัวข้อ" required :rules="[v => !!v || 'Required']" />
               </v-col>
               <v-col cols="12">
                 <v-textarea v-model="editedItem.description" label="รายละเอียด" rows="3" />
@@ -190,7 +190,7 @@ async function save() {
       <v-card>
         <v-card-title class="text-h6">Confirm Delete</v-card-title>
         <v-card-text>
-          ยืนยันการลบข้อมูลหัวข้อ <strong>{{ editedItem.name_th }}</strong>?
+          ยืนยันการลบข้อมูลหัวข้อ <strong>{{ editedItem.title_th }}</strong>?
         </v-card-text>
         <v-card-actions>
           <v-spacer />
