@@ -36,20 +36,20 @@
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 export default defineNuxtConfig({
-   // ✅ ตั้งค่า compatibilityDate ตามที่ Nuxt เตือน
- nitro: {
+  // ✅ ตั้งค่า compatibilityDate ตามที่ Nuxt เตือน
+  nitro: {
     compatibilityDate: '2025-10-12', // 🔥 วันที่ตามที่ Nuxt แนะนำใน warning
   },
 
   modules: ['@pinia/nuxt'],
-   pinia: {
+  pinia: {
     autoImports: ['defineStore', 'storeToRefs']
   },
   devtools: { enabled: false },
- runtimeConfig: {
+  runtimeConfig: {
     public: {
-      // apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:7000'
-       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:7000'
+      // apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:7001'
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:7001'
     }
   },
   // ✅ ย้าย PostCSS มาตั้งค่าที่นี่
@@ -61,7 +61,7 @@ export default defineNuxtConfig({
   },
   css: [
     'vuetify/styles',
-    '@mdi/font/css/materialdesignicons.min.css', 
+    '@mdi/font/css/materialdesignicons.min.css',
     '~/assets/css/tailwind.css'
   ],
 

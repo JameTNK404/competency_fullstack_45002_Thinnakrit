@@ -8,5 +8,6 @@ const ctrl = require('../controllers/auth.controller');
 // Roles: all
 //http://localhost:7000/api/auth/login
 router.post('/login', ctrl.login);
+router.post('/register', ctrl.register);
 
 module.exports = router;

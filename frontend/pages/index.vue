@@ -1,166 +1,124 @@
 <script setup>
-definePageMeta({ layout: 'default' })
-import { ref, onMounted, watch } from 'vue'
+definePageMeta({ layout: 'dashboard' })
 import { useAuthStore } from '~/stores/auth'
-
-const router = useRouter()
-const { $api } = useNuxtApp()
 const auth = useAuthStore()
+const role = auth.user?.role || ''
 
-const search = ref('')
-const items = ref([])
-const total = ref(0)
-const loading = ref(false)
-const errorMsg = ref('')
-const confirmDialog = ref(false)
-const selectedUser = ref(null)
+// Dashboard stats placeholders (would be fetched from an API in a real scenario)
+// For now we just mock them to show layout intent
+const adminStats = { users: 0, periods: 0, topics: 0 }
+const evaluatorStats = { pending: 0, completed: 0 }
+const evaluateeStats = { uploaded: 0, required: 0 }
 
-const options = ref({
-  page: 1,
-  itemsPerPage: 10,
-  sortBy: [{ key: 'id', order: 'desc' }]
-})
-
-// โหลดข้อมูล
-async function load() {
-  loading.value = true
-  errorMsg.value = ''
-  try {
-    const sortKey = options.value.sortBy?.[0]?.key || 'id'
-    const sortDesc = ((options.value.sortBy?.[0]?.order) || 'desc') === 'desc'
-
-    const { data } = await $api.get('/api/users/server', {
-      params: {
-        page: options.value.page,
-        itemsPerPage: options.value.itemsPerPage,
-        sortBy: sortKey,
-        sortDesc,
-        search: search.value
-      }
-    })
-    items.value = data.items
-    total.value = data.total
-  } catch (e) {
-    errorMsg.value = e.response?.data?.message || e.message || 'Load failed'
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(() => {
-  if (!auth.isLogged) {
-    router.push('/login')
-    return
-  }
-  load()
-})
-watch(options, load, { deep: true })
-watch(search, () => { options.value.page = 1; load() })
-
-function logout() {
-  auth.logout()
-  router.push('/login')
-}
-
-/* ✅ เรียกตอนกดปุ่ม Delete */
-function askDelete(user) {
-  selectedUser.value = user
-  confirmDialog.value = true
-}
-
-/* ✅ เมื่อกดยืนยันใน dialog */
-async function confirmDelete() {
-  try {
-    await $api.delete(`/api/users/${selectedUser.value.id}`)
-    confirmDialog.value = false
-    selectedUser.value = null
-    await load()
-  } catch (e) {
-    errorMsg.value = e.response?.data?.message || e.message || 'Delete failed'
-  }
-}
+const name = auth.user?.name_th || auth.user?.email || 'User'
 </script>
 
 <template>
-  <div class="container mx-auto px-4 py-6">
-    <div class="flex items-center justify-between mb-4 gap-3">
-      <div class="flex items-center gap-3">
-        <NuxtLink to="/users/new">
-          <v-btn color="primary" variant="elevated">Create User</v-btn>
-        </NuxtLink>
-        <a href="http://localhost:7000/docs" target="_blank">
-          <v-btn variant="tonal">Open API Docs</v-btn>
-        </a>
-        <NuxtLink to="/upload">
-          <v-btn variant="tonal">Upload</v-btn>
-        </NuxtLink>
-      </div>
+  <div class="px-4 py-6">
+    <h1 class="text-h4 mb-4">ยินดีต้อนรับ, {{ name }}</h1>
+    <h2 class="text-subtitle-1 text-grey-darken-1 mb-6">ระบบการประเมินบุคลากร (Teacher Evaluation System)</h2>
+    
+    <v-alert v-if="!role" type="warning" variant="tonal" class="mb-4">
+      ไม่พบข้อมูลสิทธิ์ผู้ใช้งาน
+    </v-alert>
 
-      <div class="flex items-center gap-3">
-        <v-text-field v-model="search" label="Search" density="comfortable" hide-details />
-        <v-btn color="error" @click="logout">Logout</v-btn>
-      </div>
+    <!-- ADMIN DASHBOARD -->
+    <div v-if="role === 'admin'">
+      <v-row>
+        <v-col cols="12" sm="4">
+          <v-card color="primary" variant="tonal">
+            <v-card-title>จัดการผู้ใช้</v-card-title>
+            <v-card-text class="text-h4">{{ adminStats.users }}</v-card-text>
+            <v-card-actions>
+              <NuxtLink to="/users">
+                <v-btn variant="text">ดูทั้งหมด</v-btn>
+              </NuxtLink>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="4">
+          <v-card color="success" variant="tonal">
+            <v-card-title>รอบการประเมิน</v-card-title>
+            <v-card-text class="text-h4">{{ adminStats.periods }}</v-card-text>
+            <v-card-actions>
+              <NuxtLink to="/admin/periods">
+                <v-btn variant="text">จัดการรอบ</v-btn>
+              </NuxtLink>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="4">
+          <v-card color="info" variant="tonal">
+            <v-card-title>หัวข้อประเมิน</v-card-title>
+            <v-card-text class="text-h4">{{ adminStats.topics }}</v-card-text>
+            <v-card-actions>
+              <NuxtLink to="/admin/topics">
+                <v-btn variant="text">จัดการหัวข้อ/ตัวชี้วัด</v-btn>
+              </NuxtLink>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
     </div>
 
-    <v-card>
-      <v-card-title class="text-lg">Users</v-card-title>
-      <v-card-text>
-        <v-alert
-          v-if="errorMsg"
-          type="error"
-          variant="tonal"
-          class="mb-3"
-        >
-          {{ errorMsg }}
-        </v-alert>
+    <!-- EVALUATOR DASHBOARD -->
+    <div v-else-if="role === 'evaluator'">
+      <v-row>
+        <v-col cols="12" sm="6">
+          <v-card color="warning" variant="tonal">
+            <v-card-title>งานประเมินที่รอดำเนินการ</v-card-title>
+            <v-card-text class="text-h4">{{ evaluatorStats.pending }} รายการ</v-card-text>
+            <v-card-actions>
+              <NuxtLink to="/evaluator/assignments">
+                <v-btn variant="text">ไปที่งานของฉัน</v-btn>
+              </NuxtLink>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="6">
+          <v-card color="success" variant="tonal">
+            <v-card-title>ประเมินสำเร็จแล้ว</v-card-title>
+            <v-card-text class="text-h4">{{ evaluatorStats.completed }} รายการ</v-card-text>
+            <v-card-actions>
+              <NuxtLink to="/evaluator/history">
+                <v-btn variant="text">ดูประวัติ</v-btn>
+              </NuxtLink>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
 
-        <v-data-table-server
-          v-model:items-per-page="options.itemsPerPage"
-          v-model:page="options.page"
-          :items-length="total"
-          :items="items"
-          :loading="loading"
-          :headers="[
-            { title:'ID', key:'id' },
-            { title:'Name', key:'name_th' },
-            { title:'Email', key:'email' },
-            { title:'Role', key:'role' },
-            { title:'Created', key:'created_at' },
-            { title:'Actions', key:'actions', sortable:false }
-          ]"
-          :sort-by="options.sortBy"
-          @update:sort-by="(s) => options.sortBy = s"
-        >
-          <template #item.actions="{ item }">
-            <NuxtLink :to="`/users/${item.id}`">
-              <v-btn size="small" variant="text">Edit</v-btn>
-            </NuxtLink>
-            <v-btn
-              size="small"
-              color="error"
-              variant="text"
-              @click="askDelete(item)"
-            >
-              Delete
-            </v-btn>
-          </template>
-        </v-data-table-server>
-      </v-card-text>
-    </v-card>
+    <!-- EVALUATEE DASHBOARD -->
+    <div v-else-if="role === 'evaluatee'">
+      <v-row>
+        <v-col cols="12" sm="6">
+          <v-card color="info" variant="tonal">
+            <v-card-title>สถานะการอัปโหลดหลักฐาน</v-card-title>
+            <v-card-text class="text-h4">รอการประเมิน</v-card-text>
+            <v-card-actions>
+              <NuxtLink to="/me/evidence">
+                <v-btn variant="text">จัดการหลักฐาน</v-btn>
+              </NuxtLink>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="6">
+          <v-card color="primary" variant="tonal">
+            <v-card-title>รายงานผลส่วนบุคคล</v-card-title>
+            <v-card-text>คลิกเพื่อดูสรุปคะแนนของคุณ</v-card-text>
+            <v-card-actions>
+              <NuxtLink to="/me/evaluation">
+                <v-btn variant="text">ดูผลประเมิน</v-btn>
+              </NuxtLink>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
 
-    <!-- ✅ Dialog Confirm Delete -->
-    <v-dialog v-model="confirmDialog" max-width="400">
-      <v-card>
-        <v-card-title class="text-h6">Confirm Delete</v-card-title>
-        <v-card-text>
-          Delete user <strong>#{{ selectedUser?.id }}</strong> ({{ selectedUser?.name_th }}) ?
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn variant="text" @click="confirmDialog = false">Cancel</v-btn>
-          <v-btn color="error" variant="flat" @click="confirmDelete">Delete</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
+
+<style scoped>
+</style>

@@ -259,3 +259,29 @@ exports.listServer = async (req, res, next) => {
     next(e);
   }
 };
+
+/**
+ * GET /api/users/departments
+ * Fetch all departments for registration dropdown
+ */
+exports.listDepartments = async (req, res, next) => {
+  try {
+    const items = await db("departments").select("id", "code", "name_th");
+    res.json(items);
+  } catch (e) {
+    next(e);
+  }
+};
+
+/**
+ * GET /api/users/org_groups
+ * Fetch all org groups for registration dropdown
+ */
+exports.listOrgGroups = async (req, res, next) => {
+  try {
+    const items = await db("org_groups").select("id", "code", "name_th");
+    res.json(items);
+  } catch (e) {
+    next(e);
+  }
+};

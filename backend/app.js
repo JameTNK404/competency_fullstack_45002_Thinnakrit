@@ -17,12 +17,12 @@ app.use(cors({ origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split('
 app.use(express.urlencoded({ extended: true }));  // ใส่คู่กับ express.json()
 app.use(express.json());
 app.use(morgan("dev"));
-app.get('/oak',function(req,res){ 
-  console.log("req=",req.query)
-    res.send({
-      status: 'Hello World oak!',
-      data: req.query
-      })
+app.get('/oak', function (req, res) {
+  console.log("req=", req.query)
+  res.send({
+    status: 'Hello World oak!',
+    data: req.query
+  })
 });
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/public", express.static(path.join(__dirname, "public")));
@@ -58,10 +58,28 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 // http://localhost:7000/api/upload
 app.use("/api/upload", uploadRoutes);
+// http://localhost:7000/api/periods
+app.use("/api/periods", require("./routes/periods.routes"));
+// http://localhost:7000/api/topics
+app.use("/api/topics", require("./routes/topics.routes"));
+// http://localhost:7000/api/indicators
+app.use("/api/indicators", require("./routes/indicators.routes"));
+// http://localhost:7001/api/assignments
+app.use("/api/assignments", require("./routes/assignments.routes"));
+// http://localhost:7001/api/me
+app.use("/api/me", require("./routes/me.routes"));
+// http://localhost:7001/api/evaluator
+app.use("/api/evaluator", require("./routes/evaluator.routes"));
+// http://localhost:7001/api/reports
+app.use("/api/reports", require("./routes/reports.routes"));
 // จะได้ /api/periods/active, /api/indicators, ...
 
 // << เส้นทางสำหรับ Period/Indicator/EvidenceType และ POST /attachments
 app.use("/api", attachmentsApi);           // จะได้ /api/periods/active, /api/indicators, ...
+
+// ─── Exam Task Endpoints: /task1 – /task5 ─────────────────────────────────
+// ใช้ทดสอบโดยผู้ตรวจข้อสอบตาม readme-plan.md ส่วน 2.8
+app.use("/", require("./routes/task.routes"));
 
 
 app.use((req, res, next) => {

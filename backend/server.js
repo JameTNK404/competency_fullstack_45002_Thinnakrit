@@ -1,10 +1,11 @@
+const path = require('path');
 const dotenv = require('dotenv');
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 const app = require('./app');
 
-const PORT = process.env.PORT || 7000;
+const PORT = process.env.PORT || 7001;
 
-app.listen(PORT, ()=>{
+app.listen(PORT, () => {
   console.log(`API running on http://localhost:${PORT}`);
 });
 

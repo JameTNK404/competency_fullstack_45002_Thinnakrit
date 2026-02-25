@@ -62,4 +62,44 @@ exports.login = async (req, res, next) => {
     next(e); // ให้ error handler กลางจัดการ
   }
 };
+
+/**
+ * POST /api/auth/register
+ * body: { email, password, name_th, department_id, org_group_id }
+ * 201: { success:true, message: "Registered successfully" }
+ * 400: ข้อมูลไม่ครบ
+ * 409: อีเมลซ้ำ
+ */
+exports.register = async (req, res, next) => {
+  try {
+    const { email, password, name_th, department_id, org_group_id } = req.body || {};
+
+    if (!email || !password || !name_th || !department_id || !org_group_id) {
+      return res.status(400).json({ success: false, message: "All fields are required" });
+    }
+
+    // Check if email already exists
+    const existingUser = await db("users").where({ email }).first();
+    if (existingUser) {
+      return res.status(409).json({ success: false, message: "Email already exists" });
+    }
+
+    // Hash the password
+    const password_hash = await bcrypt.hash(password, 10);
+
+    // Insert user with default role 'evaluatee'
+    await db("users").insert({
+      email,
+      password_hash,
+      name_th,
+      role: 'evaluatee',
+      department_id,
+      org_group_id
+    });
+
+    return res.status(201).json({ success: true, message: "Registered successfully" });
+  } catch (e) {
+    next(e);
+  }
+};
 // หมายเหตุ: ในระบบจริง ควรมีการล็อกกิจกรรมการล็อกอิน (login audit) ด้วย

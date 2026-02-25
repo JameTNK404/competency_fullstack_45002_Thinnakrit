@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  db:
+      image: mysql:8.0
+      command: >
+        --character-set-server=utf8mb4
+        --collation-server=utf8mb4_unicode_ci
+      environment:
+        MYSQL_ROOT_PASSWORD: rootpassword
+        MYSQL_DATABASE: skills_db
+        MYSQL_USER: user1
+        MYSQL_PASSWORD: user1_1234
+        TZ: Asia/Bangkok
+      volumes:
+        - db_data:/var/lib/mysql
+        - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+      healthcheck:
+        test: ["CMD","mysqladmin","ping","-proot_password"]
+        interval: 10s
+        timeout: 5s
+        retries: 10
+      networks: [fsnet]
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: rootpassword
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks: [fsnet]
+
+  api:
+    build: ./backend
+    env_file:
+      - ./backend/.env
+    # Note: Cannot bind host port if replicas > 1. Use lb via nginx.
+    expose:
+      - "7001"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [fsnet]
+    volumes:
+      - ./backend/uploads:/app/uploads
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+
+  frontend:
+    build: ./frontend
+    environment:
+      NITRO_PORT: 3000
+      NUXT_PUBLIC_API_BASE: http://localhost/api
+    expose:
+      - "3000"
+    depends_on:
+      - api
+    networks: [fsnet]
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx.lb.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+      - frontend
+    networks: [fsnet]
+
+volumes:
+  db_data:
+
+networks:
+  fsnet:
+    driver: bridge
