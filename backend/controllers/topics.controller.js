@@ -6,7 +6,7 @@ exports.list = async (req, res, next) => {
         let query = db("evaluation_topics");
 
         if (q) {
-            query.where("name_th", "like", `%${q}%`).orWhere("code", "like", `%${q}%`);
+            query.where("title_th", "like", `%${q}%`).orWhere("code", "like", `%${q}%`);
         }
 
         const [sortField, sortOrder] = sort.split(":");
@@ -47,7 +47,7 @@ exports.create = async (req, res, next) => {
         }
 
         const [insertId] = await db("evaluation_topics").insert({
-            code, name_th, description, weight, is_active
+            code, title_th: name_th, description, weight, active: is_active
         });
         const created = await db("evaluation_topics").where({ id: insertId }).first();
 
@@ -63,10 +63,10 @@ exports.update = async (req, res, next) => {
         const { code, name_th, description, weight, is_active } = req.body || {};
         const payload = {};
         if (code !== undefined) payload.code = code;
-        if (name_th !== undefined) payload.name_th = name_th;
+        if (name_th !== undefined) payload.title_th = name_th;
         if (description !== undefined) payload.description = description;
         if (weight !== undefined) payload.weight = weight;
-        if (is_active !== undefined) payload.is_active = is_active;
+        if (is_active !== undefined) payload.active = is_active;
 
         const affected = await db("evaluation_topics").where({ id }).update(payload);
         if (!affected) return res.status(404).json({ success: false, message: "Topic not found" });

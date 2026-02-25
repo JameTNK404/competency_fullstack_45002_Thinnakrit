@@ -16,10 +16,10 @@ import { md3 } from 'vuetify/blueprints'
 const light = {
   dark: false,
   colors: {
-    background: '#FFFFFF',
-    surface: '#FFFFFF',
-    primary: '#2563eb',
-    secondary: '#64748b',
+    background: '#f8fafc',
+    surface: '#ffffff',
+    primary: '#4f46e5',  /* Indigo 600 - modern vibrant blue */
+    secondary: '#475569',
     error: '#ef4444',
     info: '#0ea5e9',
     success: '#10b981',

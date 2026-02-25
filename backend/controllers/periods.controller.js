@@ -3,7 +3,7 @@ const db = require("../db/knex");
 exports.list = async (req, res, next) => {
     try {
         const { q, page = 1, pageSize = 10, sort = "id:desc" } = req.query;
-        let query = db("periods");
+        let query = db("evaluation_periods");
 
         if (q) {
             query.where("name_th", "like", `%${q}%`).orWhere("code", "like", `%${q}%`);
@@ -31,7 +31,7 @@ exports.list = async (req, res, next) => {
 
 exports.get = async (req, res, next) => {
     try {
-        const row = await db("periods").where({ id: req.params.id }).first();
+        const row = await db("evaluation_periods").where({ id: req.params.id }).first();
         if (!row) return res.status(404).json({ success: false, message: "Period not found" });
         res.json({ success: true, data: row });
     } catch (e) {
@@ -46,10 +46,10 @@ exports.create = async (req, res, next) => {
             return res.status(400).json({ success: false, message: "Missing required fields" });
         }
 
-        const [insertId] = await db("periods").insert({
+        const [insertId] = await db("evaluation_periods").insert({
             code, name_th, buddhist_year, start_date, end_date, is_active
         });
-        const created = await db("periods").where({ id: insertId }).first();
+        const created = await db("evaluation_periods").where({ id: insertId }).first();
 
         res.status(201).json({ success: true, data: created });
     } catch (e) {
@@ -69,10 +69,10 @@ exports.update = async (req, res, next) => {
         if (end_date !== undefined) payload.end_date = end_date;
         if (is_active !== undefined) payload.is_active = is_active;
 
-        const affected = await db("periods").where({ id }).update(payload);
+        const affected = await db("evaluation_periods").where({ id }).update(payload);
         if (!affected) return res.status(404).json({ success: false, message: "Period not found" });
 
-        const updated = await db("periods").where({ id }).first();
+        const updated = await db("evaluation_periods").where({ id }).first();
         res.json({ success: true, data: updated });
     } catch (e) {
         next(e);
@@ -81,7 +81,7 @@ exports.update = async (req, res, next) => {
 
 exports.remove = async (req, res, next) => {
     try {
-        const affected = await db("periods").where({ id: req.params.id }).del();
+        const affected = await db("evaluation_periods").where({ id: req.params.id }).del();
         if (!affected) return res.status(404).json({ success: false, message: "Period not found" });
         res.json({ success: true });
     } catch (e) {

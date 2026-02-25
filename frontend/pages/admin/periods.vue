@@ -124,8 +124,8 @@ const formatDate = (dateStr) => {
   <div class="container mx-auto px-4 py-6">
     <div class="flex items-center justify-between mb-4 gap-3">
       <v-btn color="primary" variant="elevated" prepend-icon="mdi-plus" @click="openNew">สร้างรอบการประเมิน</v-btn>
-      <div class="flex items-center gap-3">
-        <v-text-field v-model="search" label="Search" density="comfortable" hide-details />
+      <div class="flex items-center gap-3 w-full sm:w-80">
+        <v-text-field v-model="search" label="ค้นหารอบการประเมิน" variant="outlined" density="compact" prepend-inner-icon="mdi-magnify" hide-details class="bg-white rounded" />
       </div>
     </div>
 

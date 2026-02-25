@@ -17,9 +17,8 @@
               v-if="it.to"
               :to="it.to"
               class="no-underline"
-              exact-active-class="bg-primary text-white rounded-lg"
             >
-              <v-list-item :title="it.label" :active="route.path.startsWith(it.to)">
+              <v-list-item :title="it.label" :active="it.to === '/' ? route.path === '/' : route.path.startsWith(it.to)" color="primary" rounded="lg">
                 <template #prepend>
                   <v-icon :icon="it.icon || 'mdi-circle-small'" />
                 </template>

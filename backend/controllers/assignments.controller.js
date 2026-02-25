@@ -5,7 +5,7 @@ exports.list = async (req, res, next) => {
         const { q, page = 1, pageSize = 10, sort = "id:desc", period_id, evaluator_id, evaluatee_id } = req.query;
 
         let query = db("assignments")
-            .leftJoin("periods", "assignments.period_id", "periods.id")
+            .leftJoin("evaluation_periods as periods", "assignments.period_id", "periods.id")
             .leftJoin("users as evaluator", "assignments.evaluator_id", "evaluator.id")
             .leftJoin("users as evaluatee", "assignments.evaluatee_id", "evaluatee.id")
             .select(

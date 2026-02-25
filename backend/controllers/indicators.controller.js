@@ -7,7 +7,7 @@ exports.list = async (req, res, next) => {
         // Join with topics to get topic name
         let query = db("indicators")
             .leftJoin("evaluation_topics", "indicators.topic_id", "evaluation_topics.id")
-            .select("indicators.*", "evaluation_topics.name_th as topic_name");
+            .select("indicators.*", "evaluation_topics.title_th as topic_name");
 
         if (q) {
             query.where("indicators.name_th", "like", `%${q}%`)
@@ -67,7 +67,7 @@ exports.create = async (req, res, next) => {
         }
 
         const [insertId] = await db("indicators").insert({
-            topic_id, code, name_th, description, indicator_type, is_active
+            topic_id, code, name_th, description, type: indicator_type, active: is_active
         });
         const created = await db("indicators").where({ id: insertId }).first();
 
@@ -91,10 +91,10 @@ exports.update = async (req, res, next) => {
             if (!['score_1_4', 'yes_no'].includes(indicator_type)) {
                 return res.status(400).json({ success: false, message: "Invalid indicator_type" });
             }
-            payload.indicator_type = indicator_type;
+            payload.type = indicator_type;
         }
 
-        if (is_active !== undefined) payload.is_active = is_active;
+        if (is_active !== undefined) payload.active = is_active;
 
         const affected = await db("indicators").where({ id }).update(payload);
         if (!affected) return res.status(404).json({ success: false, message: "Indicator not found" });
