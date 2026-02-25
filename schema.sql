@@ -194,6 +194,7 @@ CREATE TABLE evaluation_results (
   status ENUM('draft','submitted') NOT NULL DEFAULT 'draft',
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  submitted_at TIMESTAMP NULL DEFAULT NULL,
   CONSTRAINT fk_res_period  FOREIGN KEY (period_id)    REFERENCES evaluation_periods(id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT fk_res_evale   FOREIGN KEY (evaluatee_id) REFERENCES users(id)              ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_res_evalr   FOREIGN KEY (evaluator_id) REFERENCES users(id)              ON DELETE RESTRICT ON UPDATE CASCADE,
