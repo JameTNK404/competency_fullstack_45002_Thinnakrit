@@ -8,3 +8,9 @@ dist/
 # Logs
 *.log
 
+.DS_Store
+.agent
+.specs-fire
+.specsmd
+
+.output
