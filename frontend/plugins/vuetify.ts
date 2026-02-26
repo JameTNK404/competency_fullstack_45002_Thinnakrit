@@ -16,26 +16,26 @@ import { md3 } from 'vuetify/blueprints'
 const light = {
   dark: false,
   colors: {
-    background: '#f8fafc',
+    background: '#f0fdf9',
     surface: '#ffffff',
-    primary: '#4f46e5',  /* Indigo 600 - modern vibrant blue */
-    secondary: '#475569',
+    primary: '#0d9488',  /* Teal 600 */
+    secondary: '#0f766e',
     error: '#ef4444',
-    info: '#0ea5e9',
-    success: '#10b981',
-    warning: '#f59e0b',
+    info: '#0284c7',
+    success: '#16a34a',
+    warning: '#d97706',
   },
 }
 const dark = {
   dark: true,
   colors: {
-    background: '#0b1220',
-    surface: '#111827',
-    primary: '#60a5fa',
-    secondary: '#94a3b8',
+    background: '#042f2e',
+    surface: '#134e4a',
+    primary: '#2dd4bf',
+    secondary: '#99f6e4',
     error: '#f87171',
     info: '#38bdf8',
-    success: '#34d399',
+    success: '#4ade80',
     warning: '#fbbf24',
   },
 }
